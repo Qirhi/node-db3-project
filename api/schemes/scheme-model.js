@@ -1,4 +1,27 @@
+const db = require('../../data/db-config.js');
+
+// You won't find a find function that is async
+// - async await creates a Promise, then you have to handle a Promise
+// - either resolves or is rejected
+// Any findById is ALWAYS async
+// control enter
+
 function find() { // EXERCISE A
+  return db("schemes as sc")
+    .leftJoin("steps as st", "sc.scheme_id", "st.scheme_id")
+    .groupBy("sc.scheme_id")
+    .select("sc.*")
+    .count("st.step_id as number_of_steps")
+    .orderBy("sc.scheme_id ", "ASC")
+
+  /*
+  {
+    "scheme_id: 4,
+    "scheme_name"" "More
+
+  }
+  */
+
   /*
     1A- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`.
     What happens if we change from a LEFT join to an INNER join?
@@ -86,6 +109,12 @@ function findById(scheme_id) { // EXERCISE B
 }
 
 function findSteps(scheme_id) { // EXERCISE C
+  return db("schemes as sc")
+    .join("steps as st", "sc.scheme_id", "st.step_id")
+    .select("st.step_id", "st.step_number", "st.instructions", "sc.scheme_name")
+    .orderBy("st.step_number", "asc")
+    .where("sc.scheme_id", scheme_id)
+
   /*
     1C- Build a query in Knex that returns the following data.
     The steps should be sorted by step_number, and the array
